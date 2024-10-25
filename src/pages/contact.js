@@ -1,6 +1,6 @@
 // pages/contact.js
 import { useFormik } from "formik";
-import { contactValidation } from "@/pages/validation/contactValidation";
+import { contactValidation } from "@/lib/validation/contactValidation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button"; 
 import { Input } from "@/components/ui/input"; 
