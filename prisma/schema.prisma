@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Inquiries {
+  id           Int      @id @default(autoincrement())
+  transactionNo String   @unique
+  firstName    String
+  lastName     String
+  contactNo    String
+  emailAddress String
+  subject      String
+  message      String
+  status       String
+  created      DateTime @default(now())
+  modified     DateTime @updatedAt
+}
+
+model Employee {
+  id           Int      @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  gender       String
+  employeeNo   String   @unique
+  created      DateTime @default(now())
+  modified     DateTime @updatedAt
+
+  // Relationship with User
+  User         User?
+
+  // Relation to Timesheet
+  Timesheets   Timesheet[]
+
+  // Relation to PayRate
+  PayRates     PayRate[]
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  password     String
+  status       String
+  employeeID   Int      @unique
+  created      DateTime @default(now())
+  modified     DateTime @updatedAt
+
+  // Foreign key relationship
+  Employee     Employee  @relation(fields: [employeeID], references: [id])
+}
+
+model Timesheet {
+  id           Int      @id @default(autoincrement())
+  employeeID   Int      // Foreign key to Employee model
+  timeIn       DateTime? // Nullable, starts as null
+  breakStart   DateTime? // Nullable, starts as null
+  breakEnd     DateTime? // Nullable, starts as null
+  timeOut      DateTime? // Nullable, starts as null
+  created      DateTime  @default(now())
+  modified     DateTime  @updatedAt
+
+  Employee     Employee  @relation(fields: [employeeID], references: [id])
+}
+
+model PayRate {
+  id              Int      @id @default(autoincrement())
+  payPeriod       String   // Pay period options: Daily, Weekly, Monthly, etc.
+  payRate         Float    // Pay rate value
+  payRateSchedule String   // Pay rate schedule: Hourly, Daily
+  effectiveDate   DateTime // Effective date of the pay rate
+  status          String   // Status: Active, Inactive, etc.
+  created         DateTime @default(now())
+  modified        DateTime @updatedAt
+
+  // Relation to Employee
+  Employee        Employee @relation(fields: [employeeID], references: [id])
+  employeeID      Int      // Foreign key to Employee model
+}
+
