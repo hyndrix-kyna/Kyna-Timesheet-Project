@@ -1,3 +1,4 @@
+// /src/pages/app/timesheet.js
 import { useEffect, useState } from "react";
 import { useSession, getSession } from "next-auth/react";
 
@@ -6,12 +7,26 @@ export default function Timesheet() {
   const { data: session } = useSession();
   const [timesheet, setTimesheet] = useState(null); // For current session
   const [allTimesheets, setAllTimesheets] = useState([]); // Initialize as an empty array
+  const [elapsedTime, setElapsedTime] = useState(0); // Elapsed time in seconds
 
   useEffect(() => {
     if (session?.user?.id) {
       fetchTimesheet(session.user.id); // Fetch timesheet data on page load
     }
   }, [session]);
+
+  useEffect(() => {
+    let interval = null;
+    if (status === "clockedIn" && timesheet?.timeIn && !timesheet?.timeOut) {
+      interval = setInterval(() => {
+        setElapsedTime(Math.floor((new Date() - new Date(timesheet.timeIn)) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [status, timesheet]);
 
   const fetchTimesheet = async (userId) => {
     const res = await fetch(`/api/timesheet/${userId}`, {
@@ -20,7 +35,7 @@ export default function Timesheet() {
 
     const data = await res.json();
     setTimesheet(data.current || null); // Current active timesheet
-    setAllTimesheets(data.all || []); // All records for the current day
+    setAllTimesheets(data.all || []); // All records
     updateStatus(data.current); // Set status based on current timesheet state
   };
 
@@ -49,12 +64,13 @@ export default function Timesheet() {
     if (res.ok) {
       setTimesheet(data); // Update the current timesheet
       updateStatus(data); // Update status based on the new state
+
+      await fetchTimesheet(session.user.id);
     } else {
       alert(data.error || "Failed to update timesheet");
     }
   };
 
-  // Helper to format time span (e.g., "1:45:29 am - 1:45:31 am")
   const formatTimeSpan = (timeIn, timeOut) => {
     const options = { hour: "numeric", minute: "numeric", second: "numeric", hour12: true };
     const timeInFormatted = new Date(timeIn).toLocaleTimeString("en-SG", options);
@@ -62,21 +78,19 @@ export default function Timesheet() {
     return `${timeInFormatted} - ${timeOutFormatted}`;
   };
 
-  // Helper to format duration into "00h 00m 00s"
-  const formatDuration = (milliseconds) => {
-    const totalSeconds = Math.floor(milliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours}h ${minutes}m ${seconds}s`;
+  const formatDuration = (seconds) => {
+    seconds = Math.floor(seconds); 
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
   };
 
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Timesheet</h1>
 
-      {/* Display Timesheet Records */}
+      {/* Display Timesheet Records in Descending Order */}
       <table className="min-w-full border-collapse border border-gray-200 mt-6">
         <thead>
           <tr>
@@ -88,18 +102,21 @@ export default function Timesheet() {
         </thead>
         <tbody>
           {allTimesheets.length > 0 ? (
-            allTimesheets.map((entry) => (
-              <tr key={entry.id}>
-                <td className="border border-gray-300 p-2">{`${session?.user?.firstName} ${session?.user?.lastName}`}</td>
-                <td className="border border-gray-300 p-2">{new Date(entry.timeIn).toLocaleDateString("en-SG")}</td>
-                <td className="border border-gray-300 p-2">
-                  {entry.timeOut
-                    ? formatDuration(new Date(entry.timeOut) - new Date(entry.timeIn))
-                    : "In Progress"}
-                </td>
-                <td className="border border-gray-300 p-2">{formatTimeSpan(entry.timeIn, entry.timeOut)}</td>
-              </tr>
-            ))
+            allTimesheets
+              .slice()
+              .sort((a, b) => new Date(b.timeIn) - new Date(a.timeIn))
+              .map((entry) => (
+                <tr key={entry.id}>
+                  <td className="border border-gray-300 p-2">{`${session?.user?.firstName} ${session?.user?.lastName}`}</td>
+                  <td className="border border-gray-300 p-2">{new Date(entry.timeIn).toLocaleDateString("en-SG")}</td>
+                  <td className="border border-gray-300 p-2">
+                    {entry.timeOut
+                      ? formatDuration((new Date(entry.timeOut) - new Date(entry.timeIn)) / 1000)
+                      : formatDuration(elapsedTime)}
+                  </td>
+                  <td className="border border-gray-300 p-2">{formatTimeSpan(entry.timeIn, entry.timeOut)}</td>
+                </tr>
+              ))
           ) : (
             <tr>
               <td colSpan="4" className="border border-gray-300 p-2 text-center">

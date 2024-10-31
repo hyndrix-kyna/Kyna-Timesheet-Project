@@ -1,46 +1,44 @@
 // components/Navbar.js
 
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Contact Us", path: "/contact" },
+    { name: "Inquiries", path: "/inquiries" },
+    { name: "Sign In", path: "/account/login" },
+  ];
+
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav className="bg-background text-foreground p-4 border-b border-border transition-colors duration-200 shadow-md">
       <div className="container mx-auto flex justify-between">
         <div className="text-lg font-bold">
-          <Link href="/">
-            My Website
+          <Link href="/" className="hover:text-primary">
+            Timesheet Project
           </Link>
         </div>
         <div>
           <ul className="flex space-x-4">
+            {navItems.map((item, index) => (
+              <li key={index}>
+                <Link
+                  href={item.path}
+                  className="px-3 py-1 rounded-md transition-colors duration-200 hover:bg-muted hover:text-primary font-medium"
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ))}
             <li>
-              <Link href="/" className="hover:text-gray-300">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="hover:text-gray-300">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-gray-300">
-                Contact Us
-              </Link>
-            </li>
-            <li>
-              <Link href="/inquiries" className="hover:text-gray-300">
-                Inquiries
-              </Link>
-            </li>
-            <li>
-              <Link href="/account/login" className="hover:text-gray-300">
-                Sign In
-              </Link>
+              <ThemeToggle />
             </li>
           </ul>
         </div>
       </div>
+      
     </nav>
   );
 }
