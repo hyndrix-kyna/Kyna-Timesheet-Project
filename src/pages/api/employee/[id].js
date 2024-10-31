@@ -1,3 +1,4 @@
+// /pages/api/employee/[id].js
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -7,17 +8,24 @@ export default async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
+      const employeeID = parseInt(id);
+      if (isNaN(employeeID)) {
+        console.error("Invalid employee ID:", id);
+        return res.status(400).json({ error: "Invalid employee ID" });
+      }
+
       const payRates = await prisma.payRate.findMany({
-        where: { employeeID: parseInt(id) },
+        where: { employeeID },
         orderBy: { effectiveDate: "desc" },
       });
+
       return res.status(200).json(payRates);
     } catch (error) {
-      console.error("Failed to fetch pay rate history:", error);
-      return res.status(500).json({ error: "Failed to fetch pay rate history" });
+      console.error("Error fetching pay rate history:", error.message);
+      return res.status(500).json({ error: "Failed to fetch pay rate history", details: error.message });
     }
+  } else {
+    res.setHeader("Allow", ["GET"]);
+    res.status(405).json({ error: `Method ${req.method} not allowed` });
   }
-
-  res.setHeader("Allow", ["GET"]);
-  res.status(405).json({ error: `Method ${req.method} not allowed` });
 }
