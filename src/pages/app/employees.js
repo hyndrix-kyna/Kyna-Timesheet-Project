@@ -1,3 +1,5 @@
+// /src/pages/app/employees.js
+
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
@@ -174,6 +176,7 @@ export default function Employees() {
           )}
           {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );
