@@ -1,16 +1,16 @@
-// /pages/api/employee/[id].js
+// /pages/api/employee/[employeeId].js
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export default async function handler(req, res) {
-  const { id } = req.query;
+  const { employeeId } = req.query;
 
   if (req.method === "GET") {
     try {
-      const employeeID = parseInt(id);
+      const employeeID = parseInt(employeeId);
       if (isNaN(employeeID)) {
-        console.error("Invalid employee ID:", id);
+        console.error("Invalid employee ID:", employeeId);
         return res.status(400).json({ error: "Invalid employee ID" });
       }
 

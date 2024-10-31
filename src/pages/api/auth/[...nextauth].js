@@ -31,6 +31,7 @@ export default NextAuth({
         return {
           id: user.id,
           username: user.username,
+          employeeID: user.employeeID,
           firstName: user.Employee.firstName,
           lastName: user.Employee.lastName,
         };
@@ -47,6 +48,7 @@ export default NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.employeeID = user.employeeID;
         token.firstName = user.firstName; // Add first name to the token
         token.lastName = user.lastName;   // Add last name to the token
       }
@@ -54,6 +56,7 @@ export default NextAuth({
     },
     async session({ session, token }) {
       session.user.id = token.id;
+      session.user.employeeID = token.employeeID;
       session.user.firstName = token.firstName; // Add first name to the session
       session.user.lastName = token.lastName;   // Add last name to the session
       return session;
