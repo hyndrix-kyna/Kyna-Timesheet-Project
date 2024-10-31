@@ -160,10 +160,14 @@ function formatMonthlyDate(date) {
                         <td className="border border-gray-300 p-2">{entry.status}</td>
                         <td className="border border-gray-300 p-2">{entry.payRate}</td>
                         <td className="border border-gray-300 p-2">{entry.payRateSchedule}</td>
-                        {/* <td className="border border-gray-300 p-2">{entry.effectiveDate || 'N/A'}</td> */}
                         <td className="border border-gray-300 p-2">
-  {payPeriod === "Monthly" ? formatMonthlyDate(entry.effectiveDate) : new Date(entry.effectiveDate).toLocaleDateString()}
-</td>
+                          {entry.effectiveDate === "Invalid Date" || !entry.effectiveDate
+                            ? "N/A"
+                            : entry.effectiveDate}
+                        </td>
+                        {/* <td className="border border-gray-300 p-2">
+                          {payPeriod === "Monthly" ? formatMonthlyDate(entry.effectiveDate) : new Date(entry.effectiveDate).toLocaleDateString()}
+                        </td> */}
                         <td className="border border-gray-300 p-2">{entry.payroll?.toFixed(2) || '-'}</td>
                       </tr>
                     ))

@@ -52,6 +52,8 @@ function groupByWeek(payRates) {
 
   payRates.forEach((record) => {
     const recordWeek = getWeek(record.effectiveDate);
+    const recordDate = new Date(record.effectiveDate);
+
     if (recordWeek === currentWeek) {
       weekGroup.push(record);
     } else {
@@ -86,29 +88,51 @@ function groupByMonth(payRates) {
   return grouped;
 }
 
-// Aggregate function to sum up payroll and set date ranges/rate ranges within a group
+// Updated aggregateGroup function to handle weekly date range display with enhanced logging
 function aggregateGroup(records, period) {
   const payrollTotal = records.reduce((sum, record) => sum + record.payroll, 0);
 
-  // Determine the effective date range
   let effectiveDate;
   if (period === "Weekly") {
     const startDate = new Date(records[records.length - 1].effectiveDate);
     const endDate = new Date(records[0].effectiveDate);
+
+    // Log dates for debugging
+    console.log("Weekly View Start Date:", startDate);
+    console.log("Weekly View End Date:", endDate);
+
+    // Check if dates are valid and format them for display
     if (!isNaN(startDate) && !isNaN(endDate)) {
       effectiveDate = `${startDate.toLocaleDateString("en-US")} - ${endDate.toLocaleDateString("en-US")}`;
     } else {
+      console.error("Invalid dates detected:", startDate, endDate);
       effectiveDate = "Invalid Date";
     }
   } else if (period === "Monthly") {
-    const month = new Date(records[0].effectiveDate).toLocaleString("en-US", { month: 'long' });
-    const year = new Date(records[0].effectiveDate).getFullYear();
-    effectiveDate = `${month} ${year}`;
+    const monthDate = new Date(records[0].effectiveDate);
+
+    // Log date for debugging
+    console.log("Monthly View Date:", monthDate);
+
+    if (!isNaN(monthDate)) {
+      const month = monthDate.toLocaleString("en-US", { month: 'long' });
+      const year = monthDate.getFullYear();
+      effectiveDate = `${month} ${year}`;
+    } else {
+      console.error("Invalid date detected for Monthly view:", monthDate);
+      effectiveDate = "Invalid Date";
+    }
   } else {
-    effectiveDate = new Date(records[0].effectiveDate).toLocaleDateString("en-US");
+    const singleDate = new Date(records[0].effectiveDate);
+
+    // Log date for debugging
+    console.log("Single Date View:", singleDate);
+
+    effectiveDate = !isNaN(singleDate)
+      ? singleDate.toLocaleDateString("en-US")
+      : "Invalid Date";
   }
 
-  // Determine the pay rate range
   const uniqueRates = [...new Set(records.map(record => record.payRate))];
   const payRate = uniqueRates.length > 1 ? `${Math.min(...uniqueRates)} - ${Math.max(...uniqueRates)}` : uniqueRates[0];
 
@@ -120,8 +144,6 @@ function aggregateGroup(records, period) {
     payroll: payrollTotal,
   };
 }
-
-
 
 // Helper function to get week number
 function getWeek(date) {
