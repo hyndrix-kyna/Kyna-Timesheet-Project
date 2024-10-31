@@ -1,0 +1,33 @@
+/* // Example: Contact Form Component CSS */
+
+.formWrapper {
+    @apply w-full max-w-md p-8 bg-card border border-border rounded-lg shadow-lg mx-auto;
+}
+
+.heading {
+    @apply text-3xl font-bold text-foreground mb-8 text-center;
+}
+
+.inputField {
+    @apply border border-border p-2 w-full rounded-md bg-input;
+}
+
+.inputFieldError {
+    @apply border-red-500;
+}
+
+.errorMessage {
+    @apply text-red-500 text-sm;
+}
+
+.textareaField {
+    @apply h-32 border border-border p-2 w-full rounded-md bg-input;
+}
+
+.formStatus {
+    @apply text-green-500 text-center mt-4;
+}
+
+.buttonSubmit {
+    @apply px-4 py-2 bg-primary text-primary-foreground rounded-md shadow hover:bg-primary-600;
+}

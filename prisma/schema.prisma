@@ -54,12 +54,13 @@ model User {
 }
 
 model Timesheet {
-  id           Int      @id @default(autoincrement())
-  employeeID   Int      // Foreign key to Employee model
+  id           Int       @id @default(autoincrement())
+  employeeID   Int       // Foreign key to Employee model
   timeIn       DateTime? // Nullable, starts as null
   breakStart   DateTime? // Nullable, starts as null
   breakEnd     DateTime? // Nullable, starts as null
   timeOut      DateTime? // Nullable, starts as null
+  duration     Int?      // Store duration in seconds to avoid client-side calculation
   created      DateTime  @default(now())
   modified     DateTime  @updatedAt
 
@@ -68,11 +69,11 @@ model Timesheet {
 
 model PayRate {
   id              Int      @id @default(autoincrement())
-  payPeriod       String   // Pay period options: Daily, Weekly, Monthly, etc.
   payRate         Float    // Pay rate value
   payRateSchedule String   // Pay rate schedule: Hourly, Daily
   effectiveDate   DateTime // Effective date of the pay rate
   status          String   // Status: Active, Inactive, etc.
+  payroll         Float?   // Payroll calculated based on duration and pay rate
   created         DateTime @default(now())
   modified        DateTime @updatedAt
 
@@ -80,4 +81,3 @@ model PayRate {
   Employee        Employee @relation(fields: [employeeID], references: [id])
   employeeID      Int      // Foreign key to Employee model
 }
-

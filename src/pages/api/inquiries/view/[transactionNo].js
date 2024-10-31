@@ -1,4 +1,4 @@
-// pages/api/inquiries/[transactionNo].js
+// pages/api/inquiries/view/[transactionNo].js
 
 import { PrismaClient } from "@prisma/client";
 
