@@ -1,6 +1,7 @@
 // components/Sidebar.js
 
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -49,6 +50,9 @@ export default function Sidebar() {
                     >
                       Log Out
                     </Link>
+                  </li>
+                  <li>
+                    <ThemeToggle />
                   </li>
                 </ul>
               </div>

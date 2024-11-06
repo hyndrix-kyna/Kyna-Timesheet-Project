@@ -1,29 +1,53 @@
-// pages/about.js
+// /pages/about.js
 
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 export default function About() {
+  const { theme } = useTheme();
+
   return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <h1 className="text-4xl font-bold mb-4">About Us</h1>
-        </CardHeader>
-        <CardContent>
-          <p className="text-lg mb-4">
-            We are a company dedicated to providing the best services for our clients.
-            Our team is composed of skilled professionals who are passionate about delivering
-            quality and excellence in everything we do.
-          </p>
-          <p className="text-lg mb-4">
-            Our mission is to offer outstanding solutions that make a difference in the world.
-            We value collaboration, innovation, and integrity.
-          </p>
-        </CardContent>
-        <CardFooter>
-          <a href="/contact" className="text-white bg-green-500 hover:bg-green-700 font-bold py-2 px-4 rounded">Contact Us</a>
-        </CardFooter>
-      </Card>
+    <div className="container mx-auto p-8 flex flex-col items-center min-h-screen">
+      <div
+        className={`w-full max-w-2xl p-8 rounded-lg shadow-lg ${
+          theme === 'dark' ? 'text-white' : 'bg-gray-100 text-gray-900'
+        }`}
+      >
+        <Card>
+          <CardHeader>
+            <h1 className="text-5xl font-semibold mb-4 text-center">About Us</h1>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg mb-4 text-center">
+              We are dedicated to providing the best services. Our team consists of professionals committed to quality,
+              innovation, and integrity. Our goal is to make your organizational tasks easier.
+            </p>
+            <div className="flex justify-between my-6">
+              <div className="text-center">
+                <h2 className="text-3xl font-semibold">100+</h2>
+                <p>Clients Served</p>
+              </div>
+              <div className="text-center">
+                <h2 className="text-3xl font-semibold">200+</h2>
+                <p>Projects Completed</p>
+              </div>
+              <div className="text-center">
+                <h2 className="text-3xl font-semibold">24/7</h2>
+                <p>Support</p>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-center mt-4">
+            <Button
+              variant="default"
+              className="px-6 py-2 text-lg font-semibold rounded-full shadow-md transition-transform transform hover:scale-105"
+            >
+              <a href="/contact">Contact Us</a>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }
